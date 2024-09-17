@@ -124,3 +124,12 @@ def extract_markdown_links(text):
         tuple_list.append((alt, url))
     
     return tuple_list
+
+def text_to_textnodes(text):
+    new_nodes = split_nodes_delimiter([TextNode(text, text_type_text)], "**", text_type_bold)
+    new_nodes = split_nodes_delimiter(new_nodes, "*", text_type_italic)
+    new_nodes = split_nodes_delimiter(new_nodes, "`", text_type_code)
+    new_nodes = split_nodes_image(new_nodes)
+    new_nodes = split_nodes_link(new_nodes)
+
+    return new_nodes

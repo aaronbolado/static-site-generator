@@ -92,7 +92,6 @@ class TestInlineMarkdown(unittest.TestCase):
 
     def test_extract_markdown_images(self):
         text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
-        print(extract_markdown_images(text))
         self.assertListEqual(
             [
                 ("rick roll", "https://i.imgur.com/aKaOqIh.gif"),
@@ -103,7 +102,6 @@ class TestInlineMarkdown(unittest.TestCase):
 
     def test_extract_markdown_links(self):
         text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
-        print(extract_markdown_links(text))
         self.assertListEqual(
             [
                 ("to boot dev", "https://www.boot.dev"),
@@ -117,7 +115,6 @@ class TestInlineMarkdown(unittest.TestCase):
             "This is text with a link ![to boot dev](https://www.boot.dev) and ![to youtube](https://www.youtube.com/@bootdotdev)",
             text_type_text,
         )
-        # print(split_nodes_image(node.text))
         self.assertListEqual(
             [
                 TextNode("This is text with a link ", text_type_text),
@@ -191,6 +188,115 @@ class TestInlineMarkdown(unittest.TestCase):
             ],
             new_nodes,
         )
+
+    def test_text_to_textnode(self):
+        text = "This is **text** with an *italic* word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        new_nodes = text_to_textnodes(text)
+        self.assertListEqual(
+            [
+                TextNode("This is ", text_type_text),
+                TextNode("text", text_type_bold),
+                TextNode(" with an ", text_type_text),
+                TextNode("italic", text_type_italic),
+                TextNode(" word and a ", text_type_text),
+                TextNode("code block", text_type_code),
+                TextNode(" and an ", text_type_text),
+                TextNode("obi wan image", text_type_image, "https://i.imgur.com/fJRm4Vk.jpeg"),
+                TextNode(" and a ", text_type_text),
+                TextNode("link", text_type_link, "https://boot.dev"),
+            ],
+            new_nodes,
+        )
+
+#     def test_markdown_to_blocks(self):
+#         markdown = """# This is a heading
+
+# This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+# * This is the first list item in a list block
+# * This is a list item
+# * This is another list item"""
+#         blocks = markdown_to_blocks(markdown)
+#         print(blocks)
+#         self.assertListEqual(
+#             [
+#                 ("# This is a heading"),
+#                 ("This is a paragraph of text. It has some **bold** and *italic* words inside of it."),
+#                 ("""* This is the first list item in a list block
+# * This is a list item
+# * This is another list item"""),
+#             ],
+#             blocks,
+#         )
+
+#     def test_empty_end_markdown(self):
+#         markdown = """
+
+# ==== Empty Start END ====
+# # This is a heading
+
+# This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+# * This is the first list item in a list block
+# * This is a list item
+# * This is another list item
+
+# ==== Empty Start END ====
+
+# """
+        
+#         blocks = markdown_to_blocks(markdown)
+#         print(blocks)
+#         self.assertListEqual(
+#             [
+#                 ("==== Empty Start END ===="),
+#                 ("# This is a heading"),
+#                 ("This is a paragraph of text. It has some **bold** and *italic* words inside of it."),
+#                 ("""* This is the first list item in a list block
+# * This is a list item
+# * This is another list item"""),
+#                 ("==== Empty Start END ===="),
+#             ],
+#             blocks,
+#         )
+
+#     def test_multiple_list_markdown(self):
+#         markdown = """
+
+# ==== Multiple List ====
+# # This is a heading
+
+# This is a paragraph of text. It has some **bold** and *italic* words inside of it.
+
+# * This is the first list item in a list block
+
+# * This is a list item
+# * This is another list item
+# # Another heading here
+
+# * This is a list item
+# * This is another list item
+# ==== Multiple List ====
+
+# """
+        
+#         blocks = markdown_to_blocks(markdown)
+#         print(blocks)
+#         self.assertListEqual(
+#             [
+#                 ("==== Multiple List ===="),
+#                 ("# This is a heading"),
+#                 ("This is a paragraph of text. It has some **bold** and *italic* words inside of it."),
+#                 ("""* This is the first list item in a list block
+# * This is a list item
+# * This is another list item"""),
+#                 ("# Another heading here"),
+#                 ("""* This is a list item
+# * This is another list item"""),
+#                 ("==== Multiple List ===="),
+#             ],
+#             blocks,
+#         )
 
 if __name__ == "__main__":
     unittest.main()
